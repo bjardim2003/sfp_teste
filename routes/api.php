@@ -18,5 +18,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/calculate_payment', [\App\Http\Controllers\CalculateController::class, 'calculate_payment']);
-Route::post('/calculate_payout', [\App\Http\Controllers\CalculateController::class, 'calculate_payout']);
+Route::post('/calculate_payment', [\App\Http\Controllers\CalculateController::class, 'calculate_payment'])->name('calculate_payment');
+Route::post('/calculate_payout', [\App\Http\Controllers\CalculateController::class, 'calculate_payout'])->name('calculate_payout');
