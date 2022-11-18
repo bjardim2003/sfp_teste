@@ -40,7 +40,9 @@ class CalculateControllerTest extends TestCase
             "document" => "12345678909",
             "amount" => 120,
             "currency" => "BRL",
-            "payment_method" => "pix"
+            "pix" => [
+                "key" => "123.456.789-09"
+            ]
         ];
 
         $resposta = [
@@ -87,7 +89,7 @@ class CalculateControllerTest extends TestCase
 
     }
 
-    public function test_amount_is_ok() {
+    public function test_amount_payment_is_ok() {
 
         $payload = [
             "merchant_id" => "A",
@@ -104,7 +106,7 @@ class CalculateControllerTest extends TestCase
 
     }
 
-    public function test_return_message_when_amount_is_zero() {
+    public function test_return_message_when_amount_payment_is_zero() {
 
         $payload = [
             "merchant_id" => "A",
@@ -121,7 +123,7 @@ class CalculateControllerTest extends TestCase
 
     }
 
-    public function test_return_message_when_amount_is_void() {
+    public function test_return_message_when_amount_payment_is_void() {
 
         $payload = [
             "merchant_id" => "A",
@@ -136,4 +138,61 @@ class CalculateControllerTest extends TestCase
         $this->post(route('calculate_payment'), $payload)->assertJsonFragment(["amount" => ["Amount is required"]]);
 
     }
+
+    public function test_amount_payout_is_ok() {
+
+        $payload = [
+            "merchant_id" => "A",
+            "customer_id" => "58f0c005-3b7d-4c75-81f3-93b9a6fee864",
+            "name" => "Richard Roe",
+            "email" => "richard@roe.com",
+            "document" => "12345678909",
+            "amount" => 10,
+            "currency" => "BRL",
+            "pix" => [
+                "key" => "123.456.789-09"
+            ]
+        ];
+
+        $this->post(route('calculate_payout'), $payload)->assertOK();
+
+    }
+
+    public function test_return_message_when_amount_payout_is_zero() {
+
+        $payload = [
+            "merchant_id" => "A",
+            "customer_id" => "58f0c005-3b7d-4c75-81f3-93b9a6fee864",
+            "name" => "Richard Roe",
+            "email" => "richard@roe.com",
+            "document" => "12345678909",
+            "amount" => 0,
+            "currency" => "BRL",
+            "pix" => [
+                "key" => "123.456.789-09"
+            ]
+        ];
+
+        $this->post(route('calculate_payout'), $payload)->assertJsonFragment(["amount" => ["Amount must be positive and less than zero"]]);
+
+    }
+
+    public function test_return_message_when_amount_payout_is_void() {
+
+        $payload = [
+            "merchant_id" => "A",
+            "customer_id" => "58f0c005-3b7d-4c75-81f3-93b9a6fee864",
+            "name" => "Richard Roe",
+            "email" => "richard@roe.com",
+            "document" => "12345678909",
+            "currency" => "BRL",
+            "pix" => [
+                "key" => "123.456.789-09"
+            ]
+        ];
+
+        $this->post(route('calculate_payout'), $payload)->assertJsonFragment(["amount" => ["Amount is required"]]);
+
+    }
+
 }
