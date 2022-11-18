@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MerchantRequest;
 use Illuminate\Http\Request;
 
 class CalculateController extends Controller
@@ -13,29 +14,14 @@ class CalculateController extends Controller
     public function __construct()
     {
         $this->fakerValues();
-
     }
 
-    public function calculate_payment(Request $request)
+    public function calculate_payment(MerchantRequest $request)
     {
         if (!isset($this->merchants[$request->merchant_id])) {
             return response([
                 "status" => "ERROR",
                 "message" => "Merchant not found",
-            ], 421);
-        }
-
-        if (!in_array($request->payment_method, $this->payment_methods)) {
-            return response([
-                "status" => "ERROR",
-                "message" => "Payment method not supported",
-            ], 421);
-        }
-
-        if ($request->amount <= 0) {
-            return response([
-                "status" => "ERROR",
-                "message" => "Amount must be positive and less than zero",
             ], 421);
         }
 
