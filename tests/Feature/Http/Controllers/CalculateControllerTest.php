@@ -6,6 +6,7 @@ use Tests\TestCase;
 
 class CalculateControllerTest extends TestCase
 {
+
     public function test_send_payload_payment_is_valid_should_return_200_and_json_message()
     {
         $payload = [
