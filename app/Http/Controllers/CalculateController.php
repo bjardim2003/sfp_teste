@@ -25,7 +25,11 @@ class CalculateController extends Controller
             ], 421);
         }
 
-        $calculated = $this->calculatePayment($request->amount, $request->payment_method, $request->merchant_id);
+        $value = $this->merchants[$request->merchant_id]["payment"][$request->payment_method]["value"];
+        $type = $this->merchants[$request->merchant_id]["payment"][$request->payment_method]["type"];
+        $current_balance = $this->merchants[$request->merchant_id]["balance"];
+
+        $calculated = $this->calculate($request->amount, $value, $type, $current_balance);
 
         return response($calculated, 200);
     }
@@ -46,9 +50,37 @@ class CalculateController extends Controller
             ], 421);
         }
 
-        $calculated = $this->calculatePayout($request->amount, $request->merchant_id);
+        $value = $this->merchants[$request->merchant_id]["payout"]["value"];
+        $type = $this->merchants[$request->merchant_id]["payout"]["type"];
+        $current_balance = $this->merchants[$request->merchant_id]["balance"];
+
+        $calculated = $this->calculate($request->amount, $value, $type, $current_balance);
 
         return response($calculated, 200);
+    }
+
+    /**
+     * @param float $value
+     * @param string $payment_commission_value
+     * @param string $payment_commission_type
+     * @param string $merchant_id
+     * @return array
+     */
+    public function calculate(float $amount, float $payment_commission_value, string $payment_commission_type, float $current_balance): array
+    {
+        $commission = $payment_commission_value;
+        if ($payment_commission_type == "percent")
+        {
+            $commission = ($payment_commission_value/100)*$amount;
+        }
+        $amount_without_commission = $amount - $commission;
+
+        $return_value['old_balance'] = $current_balance;
+        $return_value['new_balance'] = $current_balance + $amount_without_commission;
+        $return_value['amount'] = $amount;
+        $return_value['commission'] = $commission;
+
+        return $return_value;
     }
 
     /**
